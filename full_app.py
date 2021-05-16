@@ -187,14 +187,88 @@ def charts(name):
 
     rsi_indicator = RSIIndicator(dat["Close"],15)
     dat['rsi'] = rsi_indicator.rsi()
+
+    indicator_bb = BollingerBands(close=dat["Close"], window=20, window_dev=2)
+
+
+    dat["bollinger_middle"]=indicator_bb.bollinger_mavg()
+    dat['bollinger_Bands_Upper'] = indicator_bb.bollinger_hband()
+    dat['bollinger_Bands_Lower'] = indicator_bb.bollinger_lband()
+
+    dat=dat.dropna()
     # print(dat)
 
     fig=px.line(dat,x=dat.index,y="rsi",hover_data=["Close","Volume","Low","High"], title="RSI indicator")
 
+    fig2=px.line(dat,x=dat.index,y="bollinger_middle",hover_data=["Close","Volume","Low","High"], title="Bollinger channel")
+
+    fig2.add_scatter(name="bollinger_Bands_Upper",x=dat.index,y=dat["bollinger_Bands_Upper"])
+    fig2.add_scatter(name="bollinger_Bands_Lower",x=dat.index,y=dat["bollinger_Bands_Lower"])
 
 
+    fig3=px.line(dat,x=dat.index,y="macd",hover_data=["Close","Volume","Low","High"], title="MACD 26 ema ,12 ema, 9 ema")
+    fig3.add_scatter(name="signal",x=dat.index,y=dat["mach_Signal"])
+    fig3.add_bar(name="bar",x=dat.index,y=dat['mach_Histogram'])
 
-    return fig
+
+    volum_ind = AccDistIndexIndicator(dat["High"], dat["Low"], dat["Close"], dat["Volume"]) #ChaikinMoneyFlowIndicator(dat["High"], dat["Low"], dat["Close"], dat["Volume"],window=7,fillna=0)
+    dat["accum"]=volum_ind.acc_dist_index()
+    eom=ta.volume.VolumeWeightedAveragePrice(dat["High"], dat["Low"],dat["Close"], dat["Volume"],window=14,fillna=False)
+    dat["volume_weight_price"]=eom.volume_weighted_average_price()
+
+    trend=ta.trend.ADXIndicator(dat["High"], dat["Low"], dat["Close"])
+    dat["ADX"]=trend.adx()
+    dat["posadx"]=trend.adx_pos()
+    dat["negadx"] = trend.adx_neg()
+
+    voilatile=ta.volatility.AverageTrueRange(dat["High"], dat["Low"], dat["Close"],14)
+    dat["volatile"]=voilatile.average_true_range()
+
+    fig5 = px.line(dat, x=dat.index, y="Close", hover_data=["Close", "Volume", "Low", "High"],title="volume weighted average price")
+    fig5.add_scatter(name="volume weighted price", x=dat.index, y=dat["volume_weight_price"])
+
+    fig6 = px.line(dat, x=dat.index, y="ADX", hover_data=["Close", "Volume", "Low", "High"], title="ADX trend")
+    fig6.add_scatter(name="+ dmi", x=dat.index, y=dat["posadx"])
+    fig6.add_scatter(name="- dmi", x=dat.index, y=dat["negadx"])
+
+
+    fig7 = px.bar(dat, x=dat.index, y=dat["volatile"].apply(lambda x:x*10), hover_data=["Close", "Volume", "Low", "High"],
+                   title="volatile true average ")
+    fig7.add_scatter(name="", x=dat.index, y=dat["Close"])
+
+    data=dat.iloc[-35:]
+    data["avg_vol"] = data["Volume"].rolling(window=10).mean()
+    data["previous"] = data["Volume"].shift(1)
+    data["date"] = data.index
+    data.dropna()
+    data=data.iloc[-10:]
+
+    fig8=px.bar(x=data["date"],y=data["Volume"],title="volume analysis")
+    fig8.add_bar(x=data["date"],y=data["avg_vol"],name="7 day avg")
+    fig8.add_bar(x=data["date"], y=data["previous"], name="previous")
+    fig8.add_bar( x=data["date"], y=data["Deliverable Volume"], name="delivery")
+    fig8.update_layout(barmode='group')
+
+    g=get_max_min(dat,3,10)
+    p=find_patterns(g)
+    fig0=plotit(p,g)
+    dat=ichimoku(dat)
+
+
+    labela = go.Scatter(x=dat.index, y=dat['Lead_span_A'], name='label a',
+                               line={'color': 'green'})
+    labelb= go.Scatter(x=dat.index, y=dat['Lead_span_B'], name="label b",
+                               line={'color': 'red'})
+    fig4 = go.Figure(data=[go.Candlestick(x=dat.index,
+                                          open=dat['Open'],
+                                          high=dat['High'],
+                                          low=dat['Low'],
+                                          close=dat['Close'], ),labela,labelb,fig0])
+
+    fig4.update_layout(height=int(1000))
+
+
+    return fig,fig2,fig3,fig4,fig5,fig6,fig7,fig8,dat
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -216,12 +290,21 @@ def djhfj(value):
         value=ticker_match(value)
         print("predicted",value)
         ch=charts(value)
-
+        sector=yfinance.Ticker(value+
+                               ".NS").info["sector"]
         name=d500[value]
         return html.Div([
-            html.Div(value.upper() +  " - - - "+ name ,style={"color":"blue"}),
-            dcc.Graph(figure=ch),
-
+            html.Div(value.upper() +  " - - - "+ name +  " - - - "+"[ "+sector+" ]",style={"color":"blue"}),
+            dcc.Graph(figure=ch[0]),
+            dcc.Graph(figure=ch[1]),
+            dcc.Graph(figure=ch[2]),
+            dcc.Graph(figure=ch[3]),
+            dcc.Graph(figure=ch[4]),
+            dcc.Graph(figure=ch[5]),
+            dcc.Graph(figure=ch[6]),
+            dcc.Graph(figure=ch[7]),
+            #dcc.Graph(figure=market_sentiment(value.split(".")[0])),
+            dcc.Graph(figure=squeeze_chart(ch[8],value)),
 
         ])
     except:
