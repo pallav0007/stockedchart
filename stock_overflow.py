@@ -25,7 +25,6 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction import text
 from sklearn.feature_extraction.text import TfidfTransformer
-from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import TfidfVectorizer
 #other python files
 
