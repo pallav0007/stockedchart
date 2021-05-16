@@ -248,22 +248,23 @@ def charts(name):
     fig8.add_bar(x=data["date"], y=data["previous"], name="previous")
     fig8.add_bar( x=data["date"], y=data["Deliverable Volume"], name="delivery")
     fig8.update_layout(barmode='group')
+    #
+    # g=get_max_min(dat,3,10)
+    # p=find_patterns(g)
+    # fig0=plotit(p,g)
+    # dat=ichimoku(dat)
 
-    g=get_max_min(dat,3,10)
-    p=find_patterns(g)
-    fig0=plotit(p,g)
-    dat=ichimoku(dat)
-
-
-    labela = go.Scatter(x=dat.index, y=dat['Lead_span_A'], name='label a',
-                               line={'color': 'green'})
-    labelb= go.Scatter(x=dat.index, y=dat['Lead_span_B'], name="label b",
-                               line={'color': 'red'})
+    #
+    # labela = go.Scatter(x=dat.index, y=dat['Lead_span_A'], name='label a',
+    #                            line={'color': 'green'})
+    # labelb= go.Scatter(x=dat.index, y=dat['Lead_span_B'], name="label b",
+    #                            line={'color': 'red'})
+    #add ,labela,labelb,fig0 in fig4
     fig4 = go.Figure(data=[go.Candlestick(x=dat.index,
                                           open=dat['Open'],
                                           high=dat['High'],
                                           low=dat['Low'],
-                                          close=dat['Close'], ),labela,labelb,fig0])
+                                          close=dat['Close'], )])
 
     fig4.update_layout(height=int(1000))
 
