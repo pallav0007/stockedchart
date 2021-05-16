@@ -53,7 +53,7 @@ def tf_idf(keys, dataframe, min_videos=1):
         similarity_list[tmp_index] = 0
         min_videos -= 1
         print(similarity_list)
-    print("result_list: %s"%result_list)
+
     return result_list
 
 dall=["WIPRO"]+list(d500.values())+list(d500.keys())
@@ -285,26 +285,31 @@ d500={'3MINDIA': '3M India Limited', 'AARTIDRUGS': 'Aarti Drugs Limited', 'AARTI
 @app.callback(Output('price', 'children'),
               [Input("ticker","value")],)
 def djhfj(value):
-    print(value)
-    value=ticker_match(value)
-    print("predicted",value)
-    ch=charts(value)
-    sector=yfinance.Ticker(value+
-                           ".NS").info["sector"]
-    name=d500[value]
-    return html.Div([
-        html.Div(value.upper() +  " - - - "+ name +  " - - - "+"[ "+sector+" ]",style={"color":"blue"}),
-        dcc.Graph(figure=ch[0]),
-        dcc.Graph(figure=ch[1]),
-        dcc.Graph(figure=ch[2]),
-        dcc.Graph(figure=ch[3]),
-        dcc.Graph(figure=ch[4]),
-        dcc.Graph(figure=ch[5]),
-        dcc.Graph(figure=ch[6]),
-        dcc.Graph(figure=ch[7]),
-        #dcc.Graph(figure=market_sentiment(value.split(".")[0])),
-        dcc.Graph(figure=squeeze_chart(ch[8],value)),
+    try:
+        print(value)
+        value=ticker_match(value)
+        print("predicted",value)
+        ch=charts(value)
+        sector=yfinance.Ticker(value+
+                               ".NS").info["sector"]
+        name=d500[value]
+        return html.Div([
+            html.Div(value.upper() +  " - - - "+ name +  " - - - "+"[ "+sector+" ]",style={"color":"blue"}),
+            dcc.Graph(figure=ch[0]),
+            dcc.Graph(figure=ch[1]),
+            dcc.Graph(figure=ch[2]),
+            dcc.Graph(figure=ch[3]),
+            dcc.Graph(figure=ch[4]),
+            dcc.Graph(figure=ch[5]),
+            dcc.Graph(figure=ch[6]),
+            dcc.Graph(figure=ch[7]),
+            #dcc.Graph(figure=market_sentiment(value.split(".")[0])),
+            dcc.Graph(figure=squeeze_chart(ch[8],value)),
 
-    ])
+        ])
+    except:
+        return html.Div([
+            html.Div("ERROR LOADING CHARTS", style={"color": "red"}),
+             ])
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True,port=7800)
