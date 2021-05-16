@@ -312,4 +312,4 @@ def djhfj(value):
             html.Div("ERROR LOADING CHARTS", style={"color": "red"}),
              ])
 if __name__ == '__main__':
-    app.run_server(debug=True,port=7800)
+    app.run_server(debug=True)
