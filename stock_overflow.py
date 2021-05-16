@@ -210,11 +210,11 @@ def charts(name):
     fig3.add_scatter(name="signal",x=dat.index,y=dat["mach_Signal"])
     fig3.add_bar(name="bar",x=dat.index,y=dat['mach_Histogram'])
 
-
-    volum_ind = AccDistIndexIndicator(dat["High"], dat["Low"], dat["Close"], dat["Volume"]) #ChaikinMoneyFlowIndicator(dat["High"], dat["Low"], dat["Close"], dat["Volume"],window=7,fillna=0)
-    dat["accum"]=volum_ind.acc_dist_index()
-    eom=ta.volume.VolumeWeightedAveragePrice(dat["High"], dat["Low"],dat["Close"], dat["Volume"],window=14,fillna=False)
-    dat["volume_weight_price"]=eom.volume_weighted_average_price()
+    #
+    # volum_ind = AccDistIndexIndicator(dat["High"], dat["Low"], dat["Close"], dat["Volume"]) #ChaikinMoneyFlowIndicator(dat["High"], dat["Low"], dat["Close"], dat["Volume"],window=7,fillna=0)
+    # dat["accum"]=volum_ind.acc_dist_index()
+    # eom=ta.volume.VolumeWeightedAveragePrice(dat["High"], dat["Low"],dat["Close"], dat["Volume"],window=14,fillna=False)
+    # dat["volume_weight_price"]=eom.volume_weighted_average_price()
 
     trend=ta.trend.ADXIndicator(dat["High"], dat["Low"], dat["Close"])
     dat["ADX"]=trend.adx()
@@ -276,6 +276,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server=app.server
+app.title = "FUTURE LEADERS"
 
 app.layout = html.Div([
 
