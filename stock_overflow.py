@@ -199,11 +199,11 @@ def charts(name):
     # print(dat)
 
     fig=px.line(dat,x=dat.index,y="rsi",hover_data=["Close","Volume","Low","High"], title="RSI indicator")
-
-    fig2=px.line(dat,x=dat.index,y="bollinger_middle",hover_data=["Close","Volume","Low","High"], title="Bollinger channel")
-
-    fig2.add_scatter(name="bollinger_Bands_Upper",x=dat.index,y=dat["bollinger_Bands_Upper"])
-    fig2.add_scatter(name="bollinger_Bands_Lower",x=dat.index,y=dat["bollinger_Bands_Lower"])
+    #
+    # fig2=px.line(dat,x=dat.index,y="bollinger_middle",hover_data=["Close","Volume","Low","High"], title="Bollinger channel")
+    #
+    # fig2.add_scatter(name="bollinger_Bands_Upper",x=dat.index,y=dat["bollinger_Bands_Upper"])
+    # fig2.add_scatter(name="bollinger_Bands_Lower",x=dat.index,y=dat["bollinger_Bands_Lower"])
 
 
     fig3=px.line(dat,x=dat.index,y="macd",hover_data=["Close","Volume","Low","High"], title="MACD 26 ema ,12 ema, 9 ema")
@@ -220,21 +220,21 @@ def charts(name):
     dat["ADX"]=trend.adx()
     dat["posadx"]=trend.adx_pos()
     dat["negadx"] = trend.adx_neg()
-
-    voilatile=ta.volatility.AverageTrueRange(dat["High"], dat["Low"], dat["Close"],14)
-    dat["volatile"]=voilatile.average_true_range()
-
-    fig5 = px.line(dat, x=dat.index, y="Close", hover_data=["Close", "Volume", "Low", "High"],title="volume weighted average price")
-    fig5.add_scatter(name="volume weighted price", x=dat.index, y=dat["volume_weight_price"])
+    #
+    # voilatile=ta.volatility.AverageTrueRange(dat["High"], dat["Low"], dat["Close"],14)
+    # dat["volatile"]=voilatile.average_true_range()
+    #
+    # fig5 = px.line(dat, x=dat.index, y="Close", hover_data=["Close", "Volume", "Low", "High"],title="volume weighted average price")
+    # fig5.add_scatter(name="volume weighted price", x=dat.index, y=dat["volume_weight_price"])
 
     fig6 = px.line(dat, x=dat.index, y="ADX", hover_data=["Close", "Volume", "Low", "High"], title="ADX trend")
     fig6.add_scatter(name="+ dmi", x=dat.index, y=dat["posadx"])
     fig6.add_scatter(name="- dmi", x=dat.index, y=dat["negadx"])
 
-
-    fig7 = px.bar(dat, x=dat.index, y=dat["volatile"].apply(lambda x:x*10), hover_data=["Close", "Volume", "Low", "High"],
-                   title="volatile true average ")
-    fig7.add_scatter(name="", x=dat.index, y=dat["Close"])
+    #
+    # fig7 = px.bar(dat, x=dat.index, y=dat["volatile"].apply(lambda x:x*10), hover_data=["Close", "Volume", "Low", "High"],
+    #                title="volatile true average ")
+    # fig7.add_scatter(name="", x=dat.index, y=dat["Close"])
 
     data=dat.iloc[-35:]
     data["avg_vol"] = data["Volume"].rolling(window=10).mean()
@@ -269,7 +269,7 @@ def charts(name):
     fig4.update_layout(height=int(1000))
 
 
-    return fig,fig2,fig3,fig4,fig5,fig6,fig7,fig8,dat
+    return fig,fig3,fig4,fig6,fig8,dat
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -301,11 +301,8 @@ def djhfj(value):
             dcc.Graph(figure=ch[2]),
             dcc.Graph(figure=ch[3]),
             dcc.Graph(figure=ch[4]),
-            dcc.Graph(figure=ch[5]),
-            dcc.Graph(figure=ch[6]),
-            dcc.Graph(figure=ch[7]),
             #dcc.Graph(figure=market_sentiment(value.split(".")[0])),
-            dcc.Graph(figure=squeeze_chart(ch[8],value)),
+            dcc.Graph(figure=squeeze_chart(ch[5],value)),
 
         ])
     except:
